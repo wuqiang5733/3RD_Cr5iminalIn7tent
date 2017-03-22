@@ -53,7 +53,6 @@ public class CrimePagerActivity extends AppCompatActivity {
         });
 
         for (int i = 0; i < mCrimes.size(); i++) {
-            // 这个方法好像可以优化吧 ？ 怎么觉得这么别扭 ？
             if (mCrimes.get(i).getId().equals(crimeId)) {
                 mViewPager.setCurrentItem(i);
                 break;
