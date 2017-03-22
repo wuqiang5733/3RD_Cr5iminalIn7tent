@@ -26,7 +26,6 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckbox;
 
     public static CrimeFragment newInstance(UUID crimeId) {
-        // 这个方法接收来自 Activity 的数据
         Bundle args = new Bundle();
         args.putSerializable(ARG_CRIME_ID, crimeId);
 
@@ -38,7 +37,6 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 获得来自 Activity 的数据
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
