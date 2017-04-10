@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,23 @@ import java.util.ArrayList;
  */
 
 public class EmotionPageView extends Fragment {
+   static private Callbacks callbacks;
+
+    public interface Callbacks {
+        void onSendEmotion(String emotionName);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        callbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        callbacks = null;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +70,11 @@ public class EmotionPageView extends Fragment {
 
         public PageViewAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        @Override
+        public String getPageTitle(int position) {
+            return "Item";
         }
 
         @Override
@@ -127,8 +150,9 @@ public class EmotionPageView extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),emotionn.getDescription(),Toast.LENGTH_SHORT).show();
-                Log.d("WQ",emotionn.getDescription());
+                Toast.makeText(getActivity(), emotionn.getDescription(), Toast.LENGTH_SHORT).show();
+                Log.d("WQ", emotionn.getDescription());
+                callbacks.onSendEmotion(emotionn.getDescription());
             }
 
         }

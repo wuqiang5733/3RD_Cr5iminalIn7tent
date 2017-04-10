@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 public class CrimeListActivity extends SingleFragmentActivity
-        implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks {
+        implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks ,EmotionPageView.Callbacks{
 
     @Override
     protected Fragment createFragment() {
@@ -64,5 +64,12 @@ public class CrimeListActivity extends SingleFragmentActivity
                 getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container);
         listFragment.updateUI();
+    }
+
+    @Override
+    public void onSendEmotion(String emotionName) {
+        CrimeListFragment listFragment = (CrimeListFragment)getSupportFragmentManager().
+                findFragmentById(R.id.fragment_container);
+        listFragment.sendEmotion(emotionName);
     }
 }

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,11 @@ public class CrimeListFragment extends Fragment {
     // 将来会 在 onAttach 方法当中 把 Activity 转换成 Callbacks
     // 并赋给这个变量
     private Callbacks mCallbacks;
+    private EditText messageInput;
+
+    public void sendEmotion(String emotionName) {
+        messageInput.setText(emotionName);
+    }
 
     /**
      * Required interface for hosting activities.
@@ -63,6 +69,8 @@ public class CrimeListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         Button sendEmotion = (Button)view.findViewById(R.id.send_emotion);
+        messageInput = (EditText)view.findViewById(R.id.messageInput);
+
         sendEmotion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
