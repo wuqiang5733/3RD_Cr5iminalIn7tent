@@ -42,7 +42,8 @@ public class DatePickerFragment extends DialogFragment {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-
+            // datePicker 是从 layout file 当中 inflate 的
+            // 只要有ID的View，在旋转屏幕的时候 都会被恢复
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_date, null);
 
@@ -60,6 +61,7 @@ public class DatePickerFragment extends DialogFragment {
                                 int month = mDatePicker.getMonth();
                                 int day = mDatePicker.getDayOfMonth();
                                 Date date = new GregorianCalendar(year, month, day).getTime();
+                                // 通过调用下面的方法，把数据送到 CrimeFragment 当中
                                 sendResult(Activity.RESULT_OK, date);
                             }
                         })
@@ -73,7 +75,7 @@ public class DatePickerFragment extends DialogFragment {
 
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DATE, date);
-
+            // CrimeFragment 128 ，  228 行
         getTargetFragment()
                 .onActivityResult(getTargetRequestCode(), resultCode, intent);
     }

@@ -12,6 +12,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     @LayoutRes
     protected int getLayoutResId() {
+        // 让它的子类来决定要 inflate 那个 Layout
         return R.layout.activity_fragment;
     }
 

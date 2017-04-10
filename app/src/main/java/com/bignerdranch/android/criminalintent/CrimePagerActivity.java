@@ -20,7 +20,7 @@ public class CrimePagerActivity extends AppCompatActivity
 
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
-
+        // 第三册 第 221 页，用 Intent 调用
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeId);
@@ -31,7 +31,7 @@ public class CrimePagerActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
-
+            // 下面一行与上面 newIntent 相互配合来传送数据
         UUID crimeId = (UUID) getIntent()
                 .getSerializableExtra(EXTRA_CRIME_ID);
 
@@ -52,7 +52,7 @@ public class CrimePagerActivity extends AppCompatActivity
                 return mCrimes.size();
             }
         });
-
+            // 默认情况下 ViewPage 是显示 PagerAdapter 当中的第一个 Item
         for (int i = 0; i < mCrimes.size(); i++) {
             if (mCrimes.get(i).getId().equals(crimeId)) {
                 mViewPager.setCurrentItem(i);

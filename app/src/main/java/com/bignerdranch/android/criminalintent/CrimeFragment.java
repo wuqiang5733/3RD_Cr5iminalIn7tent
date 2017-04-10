@@ -37,6 +37,7 @@ import static android.widget.CompoundButton.OnCheckedChangeListener;
 public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
+    // 选择时间对话框需要的 identify 字符串
     private static final String DIALOG_DATE = "DialogDate";
 
     private static final int REQUEST_DATE = 0;
@@ -58,17 +59,8 @@ public class CrimeFragment extends Fragment {
      * Required interface for hosting activities.
      */
     public interface Callbacks {
+        // 这个接口的作用是：在编辑Crime的时候，CrimeList 也可以reflect
         void onCrimeUpdated(Crime crime);
-    }
-
-
-    public static CrimeFragment newInstance(UUID crimeId) {
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_CRIME_ID, crimeId);
-
-        CrimeFragment fragment = new CrimeFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -77,10 +69,22 @@ public class CrimeFragment extends Fragment {
         mCallbacks = (Callbacks) context;
     }
 
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId);
+            // 注意这个方法与下面方法的配合是如何传送数据的
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 注意 getArguments 与上面的 setArguments 方法的配合，完成了数据的传送
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
+        // 用传送过来的 UUID 生成一个 Crime
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
     }
@@ -91,6 +95,7 @@ public class CrimeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
 
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
+        // 可以用传送过来的数据设置 View 了
         mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -100,6 +105,7 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 编辑标题
                 mCrime.setTitle(s.toString());
                 updateCrime();
             }
@@ -109,7 +115,7 @@ public class CrimeFragment extends Fragment {
 
             }
         });
-
+            // 选择时间的那个 按键
         mDateButton = (Button) v.findViewById(R.id.crime_date);
         updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
@@ -118,11 +124,13 @@ public class CrimeFragment extends Fragment {
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment
                         .newInstance(mCrime.getDate());
+                // 在两个 Fragment 之间建立联系 ，
+                // 看 DatePickerFragment 大约 64，79 行
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
         });
-
+            // 是否 resolve
         mSolvedCheckbox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckbox.setChecked(mCrime.isSolved());
         mSolvedCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -133,10 +141,11 @@ public class CrimeFragment extends Fragment {
                 updateCrime();
             }
         });
-
+            // Share
         mReportButton = (Button) v.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // 用 implicit Intent 把罪行 Share 出去
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
@@ -146,7 +155,7 @@ public class CrimeFragment extends Fragment {
                 startActivity(i);
             }
         });
-
+            // 选择嫌疑人
         final Intent pickContact = new Intent(Intent.ACTION_PICK,
                 ContactsContract.Contacts.CONTENT_URI);
         mSuspectButton = (Button) v.findViewById(R.id.crime_suspect);
@@ -164,7 +173,7 @@ public class CrimeFragment extends Fragment {
                 PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
         }
-
+            // 照相
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         boolean canTakePhoto = mPhotoFile != null &&
@@ -217,7 +226,7 @@ public class CrimeFragment extends Fragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
+            // 时间选择器部分
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
@@ -225,6 +234,7 @@ public class CrimeFragment extends Fragment {
             updateCrime();
             updateDate();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
+            // 选择嫌疑人那一部分
             Uri contactUri = data.getData();
             // Specify which fields you want your query to return
             // values for.
@@ -251,6 +261,7 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            // 照相
             Uri uri = FileProvider.getUriForFile(getActivity(),
                     "com.bignerdranch.android.criminalintent.fileprovider",
                     mPhotoFile);
@@ -269,10 +280,13 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updateDate() {
+        // CreateView 时会调用 刚刚从 DatePicker 返回时
+        // 有 onActivityResult 会调用
         mDateButton.setText(mCrime.getDate().toString());
     }
 
     private String getCrimeReport() {
+        // 生成 Share 的内容
         String solvedString = null;
         if (mCrime.isSolved()) {
             solvedString = getString(R.string.crime_report_solved);
