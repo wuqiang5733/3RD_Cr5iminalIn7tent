@@ -59,7 +59,7 @@ public class CrimeFragment extends Fragment {
      * Required interface for hosting activities.
      */
     public interface Callbacks {
-        // 这个接口的作用是：在编辑Crime的时候，CrimeList 也可以reflect
+        // 这个接口是在编辑Crime的时候，CrimeList 也可以reflect
         void onCrimeUpdated(Crime crime);
     }
 

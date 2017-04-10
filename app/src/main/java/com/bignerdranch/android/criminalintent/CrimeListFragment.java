@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class CrimeListFragment extends Fragment {
         // 只要一个 Activity实现了这个接口
         // Fragment 就有了可以调用 Activity 当中 函数的办法
         void onCrimeSelected(Crime crime);
+        void onEmotionSelected();
     }
 
     @Override
@@ -60,6 +62,14 @@ public class CrimeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
+        Button sendEmotion = (Button)view.findViewById(R.id.send_emotion);
+        sendEmotion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 点击，跳出表情包部分
+                mCallbacks.onEmotionSelected();
+            }
+        });
 
         mCrimeRecyclerView = (RecyclerView) view
                 .findViewById(R.id.crime_recycler_view);
@@ -68,8 +78,6 @@ public class CrimeListFragment extends Fragment {
         if (savedInstanceState != null) {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
-
-        updateUI();
 
         return view;
     }

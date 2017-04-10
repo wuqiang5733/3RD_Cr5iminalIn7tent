@@ -2,6 +2,8 @@ package com.bignerdranch.android.criminalintent;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.FrameLayout;
 
 public class CrimeListActivity extends SingleFragmentActivity
         implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks {
@@ -19,6 +21,8 @@ public class CrimeListActivity extends SingleFragmentActivity
 
     @Override
     public void onCrimeSelected(Crime crime) {
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.detail_fragment_container);
+        frameLayout.setVisibility((frameLayout.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE);
         if (findViewById(R.id.detail_fragment_container) == null) {
             // 如果没有 detail_fragment_container 说明是手机
             // 那么启动 CrimePagerActivity
@@ -29,6 +33,27 @@ public class CrimeListActivity extends SingleFragmentActivity
             Fragment newDetail = CrimeFragment.newInstance(crime.getId());
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_fragment_container, newDetail)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onEmotionSelected() {
+
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.detail_fragment_container);
+        frameLayout.setVisibility((frameLayout.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE);
+
+
+        if (findViewById(R.id.detail_fragment_container) == null) {
+            return;
+        } else {
+            // 如果是平板，那么把 CrimeFragment 嵌到 detail_fragment_container 当中
+//            ViewPager pager = (ViewPager)findViewById(R.id.emotion_pager);
+//            pager.setAdapter(new PageViewAdapter(this, getFragmentManager());
+
+            Fragment emotionPageView = EmotionPageView.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_fragment_container, emotionPageView)
                     .commit();
         }
     }
